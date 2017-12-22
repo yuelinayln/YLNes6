@@ -1,0 +1,551 @@
+ES6从入门到精通(宁浩网)
+1.块的作用域
+    let 只能在定义他的块内使用
+2.恒量
+    const 不能重新分配新的值
+    const限制的分配值这个动作,而不是限制恒量里的值,所以：
+    const fruit=[];
+    fruit.push('');
+3.解构数组
+    function breakfast(){
+        return ['bread','tea','fruit']
+    }
+    let [a,b,c]=breakfast();
+    console.log(a,b,c);     //bread,tea,fruit
+4.解构对象
+    function breakfast(){
+        return {a:'bread',b:'tea',c:'fruit'}
+    }
+    let{a:aa,b:bb,c:cc};
+    console.log(aa,bb,cc);      //bread,tea,fruit
+5.模版字符串
+    let eat='bread',
+        drink='tea';
+    let breakfast=`今天的早餐是 ${eat}与${drink}`;
+    ``ES6拼接字符串
+    ${}在``里会变成变量
+    console.log(breakfast);     //  今天的早餐是bread与tea
+6.带标签的模版字符串
+    let eat='bread',
+        drink='tea';
+    let breakfast=kitchen`早餐是${eat}与${drink}`
+    function kitchen(strings,...values){
+        console.log(strings);
+        //数组,包含模版字符串中的每一个字符
+        //包含raw是原始的未被处理过的字符
+
+        console.log(values);
+        //在模版字符串中使用${}包括的内容
+
+        let result='';
+        for(var i=0;i<values.length;i++){
+            result+=strings[i];//加上字符
+            result+=values[i];//加上插值
+        }
+        result+=strings[strings.length-1];//加上最后一部分字符
+        return result;
+    }
+    console.log(breakfast); //早餐是bread与tea
+7.判断字符串里面是否包含其他的字符串
+    let eat='bread',
+        drink='tea';
+    let breakfast=kitchen`早餐是${eat}与${drink}`
+    console.log(breakfast.startsWidth('早餐'));
+    //true
+    //startsWidth 以什么开头
+    console.log(breakfast.endsWidth('早餐'));     //false
+    console.log(breakfast.includes('tea'));     //true
+
+8.函数默认参数
+    function breakfast(eat='bread',drink='tea'){
+        return `${eat}${drink}`
+    }
+    console.log(breakfast());   //bread tea
+    console.log(breakfast('aa','bb'));  //aa bb
+9.展开操作符  ...
+    用法1:
+    let fruits=['apple','orange'];
+        foods=['cake',...fruits];
+    console.log(fruits);    //['apple','orange']
+    console.log(...fruit);      //apple orange
+    console.log(foods);     //['cake','apple','orange']
+    用法2:
+    function breakfast(eat,drink,...foods){
+        console.log(eat,drink,foods);
+        console.log(eat,drink,...foods);
+    }
+    breakfast('cake','tea','apple','orange');
+    输出结果为：
+        cake tea ['apple','orange']
+        cake tea apple orange
+10.解构参数
+    function breakfast(eat,drink,{location,restaurant}={}){
+        console.log(eat,drink,location,restaurant);
+    }
+    breakfast('cake','tea',{location:'济南',restaurant:'饭店'});
+    //  cake tea 济南 饭店
+11.函数的名字-name属性
+    function breakfast(){}
+    console.log(breakfast.name);    //breakfast
+    let breakfast=function(){};
+    console.log(breakfast.name);    //breakfast
+    let breakfast=function superBreakfast(){};
+    console.log(breakfast.name);    //superBreakfast  因为superBreakfast的优先级比较高
+12.箭头函数
+        函数名             参数                具体操作
+    let breakfast   =   (eat,drink)   =>  {return eat+drink;}
+    原始函数写法：
+    var breakfast=function breakfast(eat,drink){
+        return eat+drink;
+    }
+13.对象表达式
+    let eat='cake',drink='tea';
+    let food={
+       eat:eat,
+       drink:drink
+    }
+    console.log(food);  //{eat:'cake',drink:'tea'}
+    如果在对象里添加和变量名一样的属性，并且属性的值就是变量表示的值
+    可以去掉冒号右边的变量名,写为：
+    let food{
+        eat,
+        drink
+    }
+    对象里面添加方法：（可以去掉breakfast:function(){},冒号后面的function）
+    let food{
+        eat,
+        drink,
+        breakfast(){}
+    }
+14.对象属性名
+    let food={};
+    let drink='hot drink';
+    food.eat='cake';
+    food[drink]='tea';  变量或者字空格隔开的符串放到 [] 里面
+    console.log(food);  //{eat:'cake',hot drink:'tea'}
+15.对比两个值是否相等
+    Object.is(NaN,NaN);     true
+    Object.is(+0,-0);       false
+    +0==-0                  true
+    +0===-0                 true
+    NaN==NaN                false
+16.把对象的值复制到另外一个对象里面--Object.assign
+    let breakfast={};
+    Object.assign(
+        breakfast,//第一个参数是接受者，也就是复制到的那个目标
+        {drink:'tea'}
+    );
+    console.log(breakfast);     //{drink:'tea'}
+17.设置对象的prototype   --  Obj.setPrototypeOf
+    let breakfast={
+        getDrink(){
+            return 'tea'
+        }
+    };
+    let dinner={
+        getDrink(){
+            return 'beer'
+        }
+    }
+    let sunday=Object.create(breakfast);
+    console.log(sunday.getDrink());     //  tea
+    console.log(Object.getPrototypeOf(sunday)===breakfast);     // true
+    Obj.setPrototypeOf(sunday,dinner);
+    console.log(sunday.getDrink());     // beer
+    console.log(Object.getPrototypeOf(sunday)===dinner);     // true
+18. __proto__   用来读取或设置当前对象的prototype对象
+    let breakfast={
+        getDrink(){
+            return 'tea'
+        }
+    };
+    let dinner={
+        getDrink(){
+            return 'beer'
+        }
+    };
+    let sunday={
+        __proto__:breakfast
+    }
+    console.log(sunday.getDrink);   //  tea
+    console.log(Object.getPrototypeOf(sunday)===breakfast);     // true
+    sunday.__proto__=dinner;
+     console.log(sunday.getDrink);   //  beer
+    console.log(Object.getPrototypeOf(sunday)===dinner);    // true
+19.super
+    let breakfast={
+        getDrink(){
+            return 'tea'
+        }
+    };
+    let dinner={
+        getDrink(){
+            return 'beer'
+        }
+    };
+    let sunday={
+        __proto__:breakfast,
+        getDrink(){
+            return super.getDrink()+'milk'
+        }
+    }
+    console.log(sunday);    //tea milk
+20.迭代器 轮流交换
+    function chef(foods){
+        let i=0;    //表示索引值
+        return{
+            next(){
+                let done=(i>=foods.length);
+                let value=!done?foods[i++]:undefined
+                return{
+                    value:value,
+                    done:done   //done为true表示已经完成迭代,没有可以在迭代的
+                }
+            }
+        }
+    }
+    let nana=chef(['egg','tomato']);
+    console.log(nana.next());// 第一次执行 {value:'egg',done:false}
+    console.log(nana.next());// 第二次执行 {value:'tomato',done:false}
+    console.log(nana.next());// 第三次执行 {value:undefined,done:true}
+21.Generators 生成迭代器
+    //定义生成迭代器
+    function* chef(foods){
+        for(var i-0;i<foods.length;i++){
+            yield foods[i];
+        }
+    }
+    let nana=chef(['egg','tomato']);
+     console.log(nana.next());// 第一次执行 {value:'egg',done:false}
+     console.log(nana.next());// 第二次执行 {value:'tomato',done:false}
+     console.log(nana.next());// 第三次执行 {value:undefined,done:true}
+22.classes - 类
+    class Chef{
+        constructor(food){
+            this.food=food
+        }
+        cook(){
+            console.log(this.food);
+        }
+    }
+    let nana=new Chef('egg');
+    nana.cook();
+23.Class类里面的 get set
+    class Chef{
+        constructor(food){
+            this.food=food;
+            this.dish=[];
+        }
+        get menu(){
+            return this.dish
+        }
+        set menu(dish){
+            this.dish.push(dish);
+        }
+        cook(){
+            console.log(this.food);
+        }
+    }
+    let nana=new Chef();
+    console.log(nana.menu='aaa');   //aaa
+    console.log(nana.menu='bbb');   //bbb
+    console.log(nana.menu);         //['aaa','bbb']
+24.静态方法 static (不需要实例化就可以使用的方法)
+    class Chef{
+        constructor(food){
+            this.food=food;
+            this.dish=[];
+        }
+        get menu(){
+            return this.dish
+        }
+        set menu(dish){
+            this.dish.push(dish);
+        }
+        static cook(food){
+            console.log(food);
+        }
+    }
+    Chef.cook('egg');   //  egg
+25.继承 - extends     一个类可以继承其他类里面的东西
+    class Person{
+        constructor(name,birthday){
+            this.name=name;
+            this.birthday=birthday;
+        }
+        intro(){
+            return `${this.name},${this.birthday}`
+        }
+    }
+    class Chef extends Person{
+        constructor(name,birthday){
+            super(name,birthday);//super 调用父类里的值
+        }
+    }
+    let nana=new Chef('nana','2017-11-29')
+    console.log(nana.intro());  //nana 2017-11-29
+26.  SET
+    let foods=new Set('aa','bb','cc','dd');
+    foods.add('ee');
+    foods.add('ee');
+    console.log(foods); //Set{'aa','bb','cc','dd','ee'}     添加重复的数值只显示一个
+    console.log(foods.size);    //5
+    console.log(foods.has('aa'));   //true
+    foods.delete('aa');
+    console.log(foods);     //Set{'bb','cc','dd','ee'}
+    foods.forEach(food=>{
+        console.log(food);  // bb     // cc     // dd     // ee
+    })
+    foods.clear();
+    console.log(foods); //Set{}
+27. Map
+    let food=new Map();
+    let fruit={},
+        cook=function(){},
+        dessert='甜品';
+    food.set(fruit,'apple');
+    console.log(food);  //Map{Object{}=>'apple'}
+    console.log(food.get(fruit));   // apple
+    food.forEach((value,key)=>{
+        console.log(`${key}=${value}`);
+    })
+29. Module
+    导出  export  {aa,bb}     //导出的可以是任何东西,比如函数、类、变量等
+    导入  import  {aa,bb}  form    ''
+    全部导出    import * as obj form ''
+                console.log(obj.xx,obj.xx)
+30.重命名导入或导出的东西
+    export {'','' as ''}  from  ''
+    import {'','' as ''}  from  ''
+31.默认的导入、默认的导出
+    export default
+    import '' form ''   //注意不要大括号
+
+
+
+
+ES6 从零开始基础+实战项目
+1.
+    创建根目录 es6
+    创建3个并行的模块：
+        app(放置前端代码)
+        server(服务器目录)
+        task(构建工具目录)
+    第一步在app文件夹下:
+        css目录
+        js目录
+            创建class类目录
+                创建 test.js
+            创建入口文件：index.js
+        views目录
+            初始化模块文件
+                创建错误模版  error.ejs
+                创建入口模版  index.ejs
+                使用.ejs而不是.html是因为node的express框架,
+                express框架所使用的模板引擎是.ejs,可以当做html使用
+    第二步server文件夹下:
+        需要使用express
+        命令  express -e .
+        命令  npm install
+    第三步task文件夹下:
+        创建util目录,存放常见的脚本
+            初始化文件   args.js
+    第四步初始化创建package.json
+        命令  npm init
+    第五步创建一个设置babel编译工具的配置文件
+        文件夹名字固定为 .babelrc
+        手动创建时需要写为 .babelrc. 文件夹名字会变成 .babel
+    第六步创建一个gulp做构建工具
+        文件名为 gulpfile.babel.js,名称是固定的
+        因为使用ES6语法,如果不写gulpfile.babel.js而是gulpfile.js在执行脚本时会报错
+2.
+    进入tasks中的args.js
+        引入一个npm包来处理命令行参数
+            import yargs from 'yargs';
+        区分是测试环境还是生产环境
+            const args=yars
+                .option('production',{
+                    boolean:true,
+                    default:false,
+                    describe:'first scripts'
+                })
+                是否需要监听开发环境中修改的文件
+                .option('watch',{
+                    boolean:true,
+                    default:false,
+                    describe:'watch all files'
+                })
+                是否需要详细输出命令行执行的日志
+                .option('verbose',{
+                    boolean:true,
+                    default:false,
+                    describe:'log'
+                })
+                处理映射？？
+                .option('sourcemaps',{
+                    describe:'force the creation of sourcemaps'
+                })
+                设置服务器端口
+                .option('port',{
+                    string:true,
+                    default:8080,
+                    describe:'server port'
+                })
+                表示对输入的命令行的内容以字符串进行解析
+                .argv
+    创建一个脚本对js做处理
+        引入包
+            import gulp from 'gulp';
+            import gulpif from 'gulp-if';
+            import concat from 'gulp-concat';
+            import webpack from 'webpack';
+            import gulpWebpack from 'webpack-stream';
+            import named form 'vinyl-named';
+            import livereload from 'gulp-livereload';
+            import plumber from 'gulp-plumber';
+            import rename from 'gulp-rename';
+            import uglify from 'gulp-uglify';
+            import {log,color} from 'gulp-util';
+            import args from './util/args';
+        用gulp.task创建一个任务
+            gulp.task('scripts',()=>{
+                return gulp.src(['app/js/index.js'])
+                .pipe(plumber({
+                    errorHandle:function(){
+
+                    }
+                }))
+                .pipe(named())
+                .pipe(gulpWebpack({
+                    module:{
+                        loaders:[{
+                            test:/\.js$/,
+                            loaders:'babel-loader'
+                        }]
+                    }
+                }),null,(error,stats)=>{
+                    log(`Finished '${colors.cyan('scripts')}'`,stats.toString({
+                        chunks:false
+                    }))
+                })
+                .pipe(gulp.dest('server/public/js'))
+                .pipe(rename({
+                    basename:'cp',
+                    extname:'.min.js'
+                }))
+                .pipe(uglify({
+                    compress:{properties:false},
+                    output:{'quote-keys':true}
+                }))
+                .pipe(gulp.dest('server/public/js'))
+                .pipe(gulpif(args.watch,livereload()))
+            })
+    创建模版、服务任务脚本
+        在tasks下新建一个pages.js文件
+        引入包
+            import gulp from 'gulp';
+            import gulpif from 'gulp-if';
+            import livereload from 'gulp-livereload';
+            import args from './util/args';
+        创建任务
+            gulp.task('pages',()=>{
+                return gulp.src('app/**/*.ejs')
+                .pipe(gulp.dest('server'))
+                .pipe(gulpif(args.watch,livereload()))
+            })
+        在task下新建一个 css.js 文件
+        引入包
+            import gulp from 'gulp';
+            import gulpif from 'gulp-if';
+            import livereload from 'gulp-livereload';
+            import args from './util/args';
+        创建任务
+            gulp.task('css',()=>{
+                return gulp.src('app/**/*.css')
+                .pipe(gulp.dest('server/public'))
+                .pipe(gulpif(args.watch,livereload()))
+            })
+        在task下新建一个 server.js
+        引入包
+            import gulp from 'gulp';
+            import gulpif from 'gulp-if';
+            import liveserver from 'gulp-live-server';
+            import args from './util/args';
+        创建任务
+        gulp.task('serve',(cb)=>{
+            if(!args.watch) return cb();
+            var server=liveserver.new([
+                '--harmony','server/bin/www'
+            ])
+            server.start(); // 启动服务器
+            js ejs改变的监听
+            gulp.watch(['server/public/**/*.js','server/view/**/*.ejs'],function(file){
+                server.notify.apple(server,[file]);
+            })
+            需要重新服务器
+            gulp.watch(['server/routes/**/*.js','server/app.js'],function(){
+                server.start.bind(server())
+            })
+        })
+3.文件自动监听
+    在tasks中新建browser.js
+    引入包
+        import gulp from 'gulp';
+        import gulpif from 'gulp-if';
+        import gutil from 'gulp-util';
+        import args from './util/args';
+    创建任务
+        gulp.task('browser',(cb)=>{
+            if(!args.watch) return cb();
+            gulp.watch('app/**/*.js',['scripts']);
+            gulp.watch('app/**/*.ejs',['pages']);
+            gulp.watch('app/**/*.css',['css']);
+        })
+    在tasks中新建一个clean.js
+    引入包
+        import gulp from 'gulp';
+        import del from 'del';
+        import args from './util/args';
+    创建任务
+        gulp.task('clean',()=>{
+            return del(['server/public','server/views'])
+        })
+4.关联所有文件
+    在tasks下新建 build.js 文件
+    引入包
+        import gulp from 'gulp';
+        import gulpSequence from 'gulp-sequence';
+    创建任务
+        serve 一定要放到最后,处于同一级的用[]写在一起,需要注意先后顺序
+        gulp.task('build',gulpSequence(
+            'clean',
+            'css',
+            'pages',
+            'scripts',
+            ['browser','serve']
+        ))
+5.默认情况在命令行只输入 gulp 没有后任务时,所以需要
+    在tasks创建 default.js 文件
+    引入包
+        import gulp from 'gulp';
+    创建任务
+        gulp.task('default',['build'])
+6.编写 gulpfile.babel.js
+    引入包
+        import requireDir from 'require-dir';
+    创建任务
+        requireDir('./tasks');
+7.编写 .babelrc
+    {"presets":["es2015"]}
+本项目需要安装的包一共有
+    npm install
+    gulp gulp-if gulp-concat webpack webpack-stream
+    vinyl-named gulp-livereload gulp-plumber gulp-rename
+    gulp-uglify gulp-util yargs gulp-live-server del gulp-util
+    babel-loader babel-core babel-preset-env
+    require-dir babel-preset-es2015 gulp-sequence
+    --save-dev
+
+
+
+
